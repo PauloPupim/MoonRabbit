@@ -15,7 +15,7 @@ from ui_MoonRabbitWindow import Ui_MainWindow
 # pyside6-rcc.exe .\img\img_files.qrc -o rc_img.py
 import rc_img
 
-# Class to install a filter in spinbox avoinding them getting focus by hover
+# Class to install a filter in doublespinbox avoiding them getting focus by hover
 class MouseWheelWidgetAdjustmentGuard(QObject):
     def __init__(self, parent: QObject):
         super().__init__(parent)
@@ -29,11 +29,11 @@ class MouseWheelWidgetAdjustmentGuard(QObject):
 
 
 class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
+    current_save_file = None
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.connectSignalsSlots()
-        # self.sb_u1_atual.setValue(1000)
 
     def connectSignalsSlots(self):
         self.actionSave_File.triggered.connect(self.save_file)
@@ -42,10 +42,6 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             spinbox.valueChanged.connect(self.calculaNeeded)
             spinbox.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
             spinbox.installEventFilter(MouseWheelWidgetAdjustmentGuard(spinbox))
-
-
-
-
 
     def calculaNeeded(object, value):
         name = object.sender().objectName()
@@ -100,7 +96,7 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
                 case 's1':
                     object.sb_s1_needed.setValue(3*(object.sb_s2_needed.value() if object.sb_s2_needed.value()>0 else object.sb_s2_wanted.value()) - value)
                 case 'l4':
-                    object.sb_l4_needed.setValue(5*(object.sb_s1_needed.value() if object.sb_s1_needed.value()>0 else object.sb_s1_wanted.value()) - value)
+                    object.sb_l4_needed.setValue(3*(object.sb_s1_needed.value() if object.sb_s1_needed.value()>0 else object.sb_s1_wanted.value()) - value)
                 case 'l3':
                     object.sb_l3_needed.setValue(5*(object.sb_l4_needed.value() if object.sb_l4_needed.value()>0 else object.sb_l4_wanted.value()) - value)
                 case 'l2':
@@ -125,9 +121,12 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
                     object.sb_u1_needed.setValue(5*(object.sb_u2_needed.value() if object.sb_u2_needed.value()>0 else object.sb_u2_wanted.value()) - value)
 
     def save_file(self):
-        save_file = QFileDialog.getSaveFileName(self, 'Save File', filter='*.json')[0]
-        if save_file == '':
-            return
+        if self.current_save_file is None:
+            save_file = QFileDialog.getSaveFileName(self, 'Save File', filter='*.json')[0]
+            if save_file == '':
+                return
+        else:
+            save_file = self.current_save_file
 
         moon_dict = {}
 
@@ -136,8 +135,11 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
 
         json_file = json.dumps(moon_dict, indent=4, sort_keys=True)
 
-        with open (save_file, 'w') as f:
+        with open(save_file, 'w') as f:
             f.write(json_file)
+
+        self.current_save_file = save_file
+
 
     def loadFile(self):
         load_file = QFileDialog.getOpenFileName(self, 'Open File', filter='*.json')[0]
@@ -150,28 +152,15 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             for key in moon_data.keys():
                 self.findChild(QDoubleSpinBox,key).setValue(moon_data[key])
 
-
-
+        self.current_save_file = load_file
 
     def preventAnnoyingSpinboxScrollBehaviour(self, control: QAbstractSpinBox) -> None:
         control.setFocusPolicy(Qt.StrongFocus)
         control.installEventFilter(self.MouseWheelWidgetAdjustmentGuard(control))
 
 
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # Form, Window = uic.loadUiType("ui_files\main.ui")
-    #
-    # app = QApplication(sys.argv)
-    # moonRabbitWin = Window()
-    # form = Form()
-    # form.setupUi(moonRabbitWin)
-    # moonRabbitWin.show()
-    #
-    # form.sb_u1_atual.setValue(2)
-
-    #moonRabbitWin.sb_u1_atual.setValue(2)
     app = QApplication(sys.argv)
     moonRabbitWindow= MoonRabbitWindow()
     moonRabbitWindow.show()
