@@ -1,0 +1,20 @@
+<RCC>
+  <qresource prefix="img">
+    <file>E1.png</file>
+    <file>E2.png</file>
+    <file>E3.png</file>
+    <file>E4.png</file>
+    <file>L1.png</file>
+    <file>L2.png</file>
+    <file>L3.png</file>
+    <file>L4.png</file>
+    <file>S1.png</file>
+    <file>S2.png</file>
+    <file>S3.png</file>
+    <file>S4.png</file>
+    <file>U1.png</file>
+    <file>U2.png</file>
+    <file>U3.png</file>
+    <file>U4.png</file>
+  </qresource>
+</RCC>
