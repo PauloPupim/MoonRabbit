@@ -8,7 +8,7 @@ from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import QEvent, QObject
 
 # Command for generate ui class/file
-# pyuic6.exe -o ui_MoonRabbitWindow.py .\ui_files\MoonRabbitWindow.ui
+# pyuic6.exe -o ui_MoonRabbitWindow.py .\ui_files\MoonRabbitWindow_.ui
 from ui_MoonRabbitWindow import Ui_MainWindow
 
 # Command to create rc_img
