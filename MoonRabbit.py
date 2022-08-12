@@ -2,9 +2,9 @@ import sys
 import json
 
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QDoubleSpinBox, QAbstractSpinBox, QFileDialog
+    QApplication, QMainWindow, QDoubleSpinBox, QAbstractSpinBox, QFileDialog, QMessageBox
 )
-from PyQt6 import QtCore
+from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import QEvent, QObject
 
 # Command for generate ui class/file
@@ -30,18 +30,46 @@ class MouseWheelWidgetAdjustmentGuard(QObject):
 
 class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
     current_save_file = None
+    unsaved_flag = False
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.connectSignalsSlots()
 
+    def closeEvent(self, event):
+        if self.unsaved_flag is True:
+            result = QMessageBox.question(self,
+                                       "Confirm exit...",
+                                       "There is unsaved file. Do you want to save?",
+                                       QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard)
+
+            if result == QMessageBox.StandardButton.Save:
+                self.save_file()
+            event.accept()
+        else:
+            event.accept()
+
+
+    def preventAnnoyingSpinboxScrollBehaviour(self, control: QAbstractSpinBox) -> None:
+        control.setFocusPolicy(Qt.StrongFocus)
+        control.installEventFilter(self.MouseWheelWidgetAdjustmentGuard(control))
+
+    def set_unsaved_flag(self):
+        self.unsaved_flag = True
+        self.setWindowTitle('Moon Rabbit Calculator**')
+
+    def set_saved_flag(self):
+        self.unsaved_flag = False
+        self.setWindowTitle('Moon Rabbit Calculator')
+
     def connectSignalsSlots(self):
         self.actionSave_File.triggered.connect(self.save_file)
-        self.actionLoad_File.triggered.connect(self.loadFile)
+        self.actionLoad_File.triggered.connect(self.load_file)
         for spinbox in self.findChildren(QDoubleSpinBox):
             spinbox.valueChanged.connect(self.calculaNeeded)
             spinbox.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
             spinbox.installEventFilter(MouseWheelWidgetAdjustmentGuard(spinbox))
+            spinbox.valueChanged.connect(self.set_unsaved_flag)
 
     def calculaNeeded(object, value):
         name = object.sender().objectName()
@@ -131,7 +159,8 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
         moon_dict = {}
 
         for spinbox in self.findChildren(QDoubleSpinBox):
-            moon_dict[spinbox.objectName()] = spinbox.value()
+            if spinbox.value() != 0:
+                moon_dict[spinbox.objectName()] = spinbox.value()
 
         json_file = json.dumps(moon_dict, indent=4, sort_keys=True)
 
@@ -139,9 +168,10 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             f.write(json_file)
 
         self.current_save_file = save_file
+        self.set_saved_flag()
 
 
-    def loadFile(self):
+    def load_file(self):
         load_file = QFileDialog.getOpenFileName(self, 'Open File', filter='*.json')[0]
 
         if load_file == '':
@@ -153,10 +183,7 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
                 self.findChild(QDoubleSpinBox,key).setValue(moon_data[key])
 
         self.current_save_file = load_file
-
-    def preventAnnoyingSpinboxScrollBehaviour(self, control: QAbstractSpinBox) -> None:
-        control.setFocusPolicy(Qt.StrongFocus)
-        control.installEventFilter(self.MouseWheelWidgetAdjustmentGuard(control))
+        self.set_saved_flag()
 
 
 # Press the green button in the gutter to run the script.

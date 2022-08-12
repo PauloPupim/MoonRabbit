@@ -17,4 +17,7 @@
     <file>U3.png</file>
     <file>U4.png</file>
   </qresource>
+  <qresource prefix="icon">
+    <file>main_icon_.png</file>
+  </qresource>
 </RCC>
