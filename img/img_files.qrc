@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="img">
+  <qresource prefix="img_moon_rabbit">
     <file>E1.png</file>
     <file>E2.png</file>
     <file>E3.png</file>
@@ -19,5 +19,22 @@
   </qresource>
   <qresource prefix="icon">
     <file>main_icon_.png</file>
+  </qresource>
+  <qresource prefix="img_nia">
+    <file>nia_E1.png</file>
+    <file>nia_E2.png</file>
+    <file>nia_E3.png</file>
+    <file>nia_E4.png</file>
+    <file>nia_L2.png</file>
+    <file>nia_L3.png</file>
+    <file>nia_L4.png</file>
+    <file>nia_S1.png</file>
+    <file>nia_S2.png</file>
+    <file>nia_S3.png</file>
+    <file>nia_S4.png</file>
+    <file>nia_U1.png</file>
+    <file>nia_U2.png</file>
+    <file>nia_U3.png</file>
+    <file>nia_U4.png</file>
   </qresource>
 </RCC>
