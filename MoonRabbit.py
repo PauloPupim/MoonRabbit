@@ -77,17 +77,9 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
     def calculaNeeded(object, value):
         name = object.sender().objectName()
         character = 'nia' if name[-2:] == '_2' else 'rab'
-
         level = name[3:5]
         type = name[6:] if character == 'rab' else name[6:-2]
 
-
-        print(character)
-        print("name objeto:", name)
-        print("Level objeto:", level)
-        print("Type objeto:", type)
-        print("Value objeto:", value)
-        
         if (character == 'rab'):
             if type == 'wanted' or type == 'needed':
                 match level:
@@ -290,8 +282,6 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-
-
     app = QApplication(sys.argv)
     moonRabbitWindow= MoonRabbitWindow()
     moonRabbitWindow.show()
