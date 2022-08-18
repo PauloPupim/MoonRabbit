@@ -21,6 +21,7 @@
     <file>main_icon_.png</file>
   </qresource>
   <qresource prefix="img_nia">
+    <file>nia_L1.png</file>
     <file>nia_E1.png</file>
     <file>nia_E2.png</file>
     <file>nia_E3.png</file>
