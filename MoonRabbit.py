@@ -49,11 +49,11 @@ class CalculateTime(QWidget, Ui_CalculateTime):
         needed = object.dsb_needed.value()
         time_rate = object.cb_rate_time.currentText()
         match time_rate:
-            case 'Hours':
+            case 'Hour':
                 time = 1/60
-            case 'Minutes':
+            case 'Minute':
                 time = 1
-            case 'Seconds':
+            case 'Second':
                 time = 60
         if rate <= 0:
             result = ''
@@ -66,30 +66,14 @@ class CalculateTime(QWidget, Ui_CalculateTime):
 
 
 class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
-    # Level = Enum('LEVEL', 'U1 U2 U3 U4 E1 E2 E3 E4 L1 L2 L3 L4 S1 S2 S3 S4')
-
-    # U1 = 1
-    # U2 = 2
-    # U3 = 3
-    # U4 = 4
-    # E1 = 5
-    # E2 = 6
-    # E3 = 7
-    # E4 = 8
-    # L1 = 9
-    # L2 = 10
-    # L3 = 11
-    # L4 = 12
-    # S1 = 13
-    # S2 = 14
-    # S3 = 15
-    # S4 = 16
     current_save_file = None
     unsaved_flag = False
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.connectSignalsSlots()
+        self.frame_unique_2.hide()
+        self.frame_unique.hide()
 
     def closeEvent(self, event):
         if self.unsaved_flag is True:
@@ -120,11 +104,19 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
         self.actionSave_File.triggered.connect(self.save_file)
         self.actionLoad_File.triggered.connect(self.load_file)
         self.actionCalculate_Time.triggered.connect(self.show_calculate_window)
+        self.action_lyn_Unq_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_lyn_Epc_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_lyn_Lng_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_lyn_Stl_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_nia_Unq_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_nia_Epc_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_nia_Lng_Wpns.toggled.connect(self.change_weapons_view)
+        self.action_nia_Stl_Wpns.toggled.connect(self.change_weapons_view)
 
         for spinbox in self.findChildren(QDoubleSpinBox):
             name = spinbox.objectName()
-            character = 'nia' if name[-2:] == '_2' else 'rab'
-            type = name[6:] if character == 'rab' else name[6:-2]
+            character = 'nia' if name[-2:] == '_2' else 'lyn'
+            type = name[6:] if character == 'lyn' else name[6:-2]
             spinbox.valueChanged.connect(self.calculaNeeded)
             spinbox.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
             spinbox.installEventFilter(MouseWheelWidgetAdjustmentGuard(spinbox))
@@ -137,6 +129,47 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             spinbox.valueChanged.connect(self.calculaTime)
             spinbox.valueChanged.connect(self.set_unsaved_flag)
 
+
+
+    def change_weapons_view(self):
+        name = self.sender().objectName()[7:14]
+        if (self.sender().isChecked()):
+            match name:
+                case 'lyn_Unq':
+                    self.frame_unique.show()
+                case 'lyn_Epc':
+                    self.frame_epic.show()
+                case 'lyn_Lng':
+                    self.frame_legendary.show()
+                case 'lyn_Stl':
+                    self.frame_stellar.show()
+                case 'nia_Unq':
+                    self.frame_unique_2.show()
+                case 'nia_Epc':
+                    self.frame_epic_2.show()
+                case 'nia_Lng':
+                    self.frame_legendary_2.show()
+                case 'nia_Stl':
+                    self.frame_stellar_2.show()
+        else:
+            match name:
+                case 'lyn_Unq':
+                    self.frame_unique.hide()
+                case 'lyn_Epc':
+                    self.frame_epic.hide()
+                case 'lyn_Lng':
+                    self.frame_legendary.hide()
+                case 'lyn_Stl':
+                    self.frame_stellar.hide()
+                case 'nia_Unq':
+                    self.frame_unique_2.hide()
+                case 'nia_Epc':
+                    self.frame_epic_2.hide()
+                case 'nia_Lng':
+                    self.frame_legendary_2.hide()
+                case 'nia_Stl':
+                    self.frame_stellar_2.hide()
+
     def show_calculate_window(self):
         # But if you see it it will only be visible for a fraction of a second. What's happening?
         # Inside this method, we are creating our window (widget) object, storing it in the variable w and showing it.
@@ -148,29 +181,40 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
     def calculaTime(object, value):
         name = object.sender().objectName()
         level = name[3:5]
-        character = 'nia' if name[-2:] == '_2' else 'rab'
-        type = name[6:] if character == 'rab' else name[6:-2]
+        character = 'nia' if name[-2:] == '_2' else 'lyn'
+        type = name[6:] if character == 'lyn' else name[6:-2]
 
-        if type == 'needed':
-            needed = value
-            rate = object.findChild(QSpinBox, 'sb_' + level + '_rate').value()
+        if character == 'lyn':
+            if type == 'needed':
+                needed = value
+                rate = object.findChild(QSpinBox, 'sb_' + level + '_rate').value()
+            else:
+                needed = object.findChild(QDoubleSpinBox, 'sb_' + level + '_needed').value()
+                rate = value
+
+            mnt = '' if rate <= 0 else str(timedelta(minutes=needed/(rate/60))).replace(',', '')
+            mnt = re.sub('\..*' ,'',mnt)
+            object.findChild(QLineEdit, 'le_' + level + '_time').setText(mnt)
         else:
-            needed = object.findChild(QDoubleSpinBox, 'sb_' + level + '_needed').value()
-            rate = value
+            if type == 'needed':
+                needed = value
+                rate = object.findChild(QSpinBox, 'sb_' + level + '_rate_2').value()
+            else:
+                needed = object.findChild(QDoubleSpinBox, 'sb_' + level + '_needed_2').value()
+                rate = value
 
-        mnt = '' if rate <= 0 else str(timedelta(minutes=needed/(rate/60))).replace(',', '')
+            mnt = '' if rate <= 0 else str(timedelta(minutes=needed/(rate/60))).replace(',', '')
+            mnt = re.sub('\..*' ,'',mnt)
+            object.findChild(QLineEdit, 'le_' + level + '_time_2').setText(mnt)
 
-        mnt = re.sub('\..*' ,'',mnt)
-
-        object.findChild(QLineEdit, 'le_' + level + '_time').setText(mnt)
 
     def calculaNeeded(object, value):
         name = object.sender().objectName()
-        character = 'nia' if name[-2:] == '_2' else 'rab'
+        character = 'nia' if name[-2:] == '_2' else 'lyn'
         level = name[3:5]
-        type = name[6:] if character == 'rab' else name[6:-2]
+        type = name[6:] if character == 'lyn' else name[6:-2]
 
-        if (character == 'rab'):
+        if (character == 'lyn'):
             if type == 'wanted' or type == 'needed':
                 match level:
                     case 's4':
@@ -360,7 +404,7 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
                 else:
                     rab_dict[lineedit.objectName()] = lineedit.text()
 
-        moon_dict = {'rab': rab_dict, 'nia': nia_dict}
+        moon_dict = {'lyn': rab_dict, 'nia': nia_dict}
         json_file = json.dumps(moon_dict, indent=4, sort_keys=True)
 
         with open(save_file, 'w') as f:
@@ -382,8 +426,8 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             for character in moon_data.keys():
                 for key in moon_data[character].keys():
                     # Character Nia has a '_2' suffix in his objects names
-                    box = key if character == 'rab' else key+'_2'
-                    type = key[6:] #if character == 'rab' else key[6:-2]
+                    box = key if character == 'lyn' else key+'_2'
+                    type = key[6:]
                     if type == 'atual' or type == 'needed' or type == 'wanted':
                         self.findChild(QDoubleSpinBox, box).setValue(moon_data[character][key])
                     if type == 'rate':

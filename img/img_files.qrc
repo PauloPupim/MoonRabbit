@@ -18,7 +18,7 @@
     <file>U4.png</file>
   </qresource>
   <qresource prefix="icon">
-    <file>main_icon_.png</file>
+    <file>main_icon.png</file>
   </qresource>
   <qresource prefix="img_nia">
     <file>nia_L1.png</file>
