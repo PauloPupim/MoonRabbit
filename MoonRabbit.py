@@ -127,6 +127,7 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
 
         for spinbox in self.findChildren(QSpinBox):
             spinbox.valueChanged.connect(self.calculaTime)
+            spinbox.valueChanged.connect(self.calculaNeeded)
             spinbox.valueChanged.connect(self.set_unsaved_flag)
 
 
@@ -207,7 +208,6 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             mnt = re.sub('\..*' ,'',mnt)
             object.findChild(QLineEdit, 'le_' + level + '_time_2').setText(mnt)
 
-
     def calculaNeeded(object, value):
         name = object.sender().objectName()
         character = 'nia' if name[-2:] == '_2' else 'lyn'
@@ -218,7 +218,7 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             if type == 'wanted' or type == 'needed':
                 match level:
                     case 's4':
-                        object.sb_s3_needed.setValue(value*3 - object.sb_s3_atual.value())
+                        object.sb_s3_needed.setValue(value*2 - object.sb_s3_atual.value())
                     case 's3':
                         object.sb_s2_needed.setValue(value*3 - object.sb_s2_atual.value())
                     case 's2':
@@ -253,7 +253,7 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
                     case 's4':
                         object.sb_s4_needed.setValue((object.sb_s4_needed.value() if object.sb_s4_needed.value() > 0 else object.sb_s4_wanted.value()) - value)
                     case 's3':
-                        object.sb_s3_needed.setValue(3*(object.sb_s4_needed.value() if object.sb_s4_needed.value()>0 else object.sb_s4_wanted.value()) - value)
+                        object.sb_s3_needed.setValue(2*(object.sb_s4_needed.value() if object.sb_s4_needed.value()>0 else object.sb_s4_wanted.value()) - value)
                     case 's2':
                         object.sb_s2_needed.setValue(3*(object.sb_s3_needed.value() if object.sb_s3_needed.value()>0 else object.sb_s3_wanted.value()) - value)
                     case 's1':
@@ -282,11 +282,44 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
                         object.sb_u2_needed.setValue(5*(object.sb_u3_needed.value() if object.sb_u3_needed.value()>0 else object.sb_u3_wanted.value()) - value)
                     case 'u1':
                         object.sb_u1_needed.setValue(5*(object.sb_u2_needed.value() if object.sb_u2_needed.value()>0 else object.sb_u2_wanted.value()) - value)
+
+            if type == 'rate':
+                match level:
+                    case 's3':
+                        object.sb_s4_rate.setValue(int(object.sb_s3_rate.value()/2 if object.sb_s3_rate.value()/2 >= 1 else 0))
+                    case 's2':
+                        object.sb_s3_rate.setValue(int(object.sb_s2_rate.value()/3 if object.sb_s2_rate.value()/3 >= 1 else 0))
+                    case 's1':
+                        object.sb_s2_rate.setValue(int(object.sb_s1_rate.value()/3 if object.sb_s1_rate.value()/3 >= 1 else 0))
+                    case 'l4':
+                        object.sb_s1_rate.setValue(int(object.sb_l4_rate.value()/3 if object.sb_l4_rate.value()/3 >= 1 else 0))
+                    case 'l3':
+                        object.sb_l4_rate.setValue(int(object.sb_l3_rate.value()/5 if object.sb_l3_rate.value()/5 >= 1 else 0))
+                    case 'l2':
+                        object.sb_l3_rate.setValue(int(object.sb_l2_rate.value()/5 if object.sb_l2_rate.value()/5 >= 1 else 0))
+                    case 'l1':
+                        object.sb_l2_rate.setValue(int(object.sb_l1_rate.value()/5 if object.sb_l1_rate.value()/5 >= 1 else 0))
+                    case 'e4':
+                        object.sb_l1_rate.setValue(int(object.sb_e4_rate.value()/5 if object.sb_e4_rate.value()/5 >= 1 else 0))
+                    case 'e3':
+                        object.sb_e4_rate.setValue(int(object.sb_e3_rate.value()/5 if object.sb_e3_rate.value()/5 >= 1 else 0))
+                    case 'e2':
+                        object.sb_e3_rate.setValue(int(object.sb_e2_rate.value()/5 if object.sb_e2_rate.value()/5 >= 1 else 0))
+                    case 'e1':
+                        object.sb_e2_rate.setValue(int(object.sb_e1_rate.value()/5 if object.sb_e1_rate.value()/5 >= 1 else 0))
+                    case 'u4':
+                        object.sb_e1_rate.setValue(int(object.sb_u4_rate.value()/5 if object.sb_u4_rate.value()/5 >= 1 else 0))
+                    case 'u3':
+                        object.sb_u4_rate.setValue(int(object.sb_u3_rate.value()/5 if object.sb_u3_rate.value()/5 >= 1 else 0))
+                    case 'u2':
+                        object.sb_u3_rate.setValue(int(object.sb_u2_rate.value()/5 if object.sb_u2_rate.value()/5 >= 1 else 0))
+                    case 'u1':
+                        object.sb_u2_rate.setValue(int(object.sb_u1_rate.value()/5 if object.sb_u1_rate.value()/5 >= 1 else 0))
         else:
             if type == 'wanted' or type == 'needed':
                 match level:
                     case 's4':
-                        object.sb_s3_needed_2.setValue(value * 3 - object.sb_s3_atual_2.value())
+                        object.sb_s3_needed_2.setValue(value * 2 - object.sb_s3_atual_2.value())
                     case 's3':
                         object.sb_s2_needed_2.setValue(value * 3 - object.sb_s2_atual_2.value())
                     case 's2':
@@ -319,10 +352,9 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
             if type == 'atual':
                 match level:
                     case 's4':
-                        object.sb_s4_needed_2.setValue((
-                                                         object.sb_s4_needed_2.value() if object.sb_s4_needed_2.value() > 0 else object.sb_s4_wanted_2.value()) - value)
+                        object.sb_s4_needed_2.setValue((object.sb_s4_needed_2.value() if object.sb_s4_needed_2.value() > 0 else object.sb_s4_wanted_2.value()) - value)
                     case 's3':
-                        object.sb_s3_needed_2.setValue(3 * (
+                        object.sb_s3_needed_2.setValue(2 * (
                             object.sb_s4_needed_2.value() if object.sb_s4_needed_2.value() > 0 else object.sb_s4_wanted_2.value()) - value)
                     case 's2':
                         object.sb_s2_needed_2.setValue(3 * (

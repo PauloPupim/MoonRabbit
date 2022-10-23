@@ -177,7 +177,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>DROP RATE PER MINUTE</string>
+                 <string>DROP RATE PER HOUR</string>
                 </property>
                </widget>
               </item>
@@ -337,7 +337,7 @@
             <widget class="QWidget" name="scrollAreaWidgetContents">
              <property name="geometry">
               <rect>
-               <x>-1018</x>
+               <x>0</x>
                <y>0</y>
                <width>2925</width>
                <height>371</height>
@@ -3455,7 +3455,7 @@ selection-color: rgb(0, 0, 0);</string>
                  </font>
                 </property>
                 <property name="text">
-                 <string>DROP RATE PER MINUTE</string>
+                 <string>DROP RATE PER HOUR</string>
                 </property>
                </widget>
               </item>
