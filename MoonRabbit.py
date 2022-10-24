@@ -445,11 +445,15 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
         self.current_save_file = save_file
         self.set_saved_flag()
 
-    def load_file(self):
-        load_file = QFileDialog.getOpenFileName(self, 'Open File', directory='E:\\Documents\\Python_project\\MoonRabbit\\saves_files', filter='*.json')[0]
+    def load_file(self, filename):
+        if filename:
+            load_file = filename
+        else:
+            load_file = QFileDialog.getOpenFileName(self, 'Open File',directory='E:\\Documents\\Python_project\\MoonRabbit\\saves_files',filter='*.json')[0]
 
-        if load_file == '':
+        if filename == '':
             return
+
         self.blockSignals(True)
 
         with open(load_file, 'r') as f:
@@ -470,8 +474,12 @@ class MoonRabbitWindow(QMainWindow, Ui_MainWindow):
         self.set_saved_flag()
         self.blockSignals(False)
 
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     moonRabbitWindow = MoonRabbitWindow()
+    if len(sys.argv) == 2:
+        moonRabbitWindow.load_file(sys.argv[1])
     moonRabbitWindow.show()
     sys.exit(app.exec())
